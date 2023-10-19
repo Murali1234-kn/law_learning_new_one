@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/signup&login/")
-public class User_Controller
-{
+public class User_Controller {
     @Autowired
     public User_Service user_Service;
     @Autowired
@@ -63,7 +62,7 @@ public class User_Controller
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Internal server error"));
-    }
+            }
 }
 
   /*  @PostMapping("/login/sendotp")
