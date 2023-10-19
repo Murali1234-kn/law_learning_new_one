@@ -68,7 +68,7 @@ public class PhoneOtpService {
         return cachedValue != null && cachedValue.equals(phoneotp);
     }
 
-    private String getCachedPhoneOtp(String phone) {
+    public String getCachedPhoneOtp(String phone) {
         Cache cache = cacheManager.getCache("phoneOtpCache");
         Element cachedOtp = cache.get(phone);
         System.out.println("cachedotp in phone"+cachedOtp);
@@ -153,7 +153,7 @@ public class PhoneOtpService {
     public boolean sendPhoneOtp(String phone, String phoneotp) {
         try {
             String account_sid = "AC020d6ca5c5f77b47e921a402f1ecda2a";
-            String auth_token = "7c96075c0b3f11c0f5323c7361fb1d6c";
+            String auth_token = "15e669def291491fe2b29effa4da2307";
             String trial_number = "+17319374329";
             String defaultCountryCode = "+91";
 
