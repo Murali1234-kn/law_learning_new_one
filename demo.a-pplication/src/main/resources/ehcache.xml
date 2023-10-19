@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd"
+         updateCheck="false">
+
+    <defaultCache
+            maxEntriesLocalHeap="10000"
+            eternal="false"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="3600"
+            overflowToDisk="true">
+    </defaultCache>
+
+    <cache
+            name="emailOtpCache"
+            maxEntriesLocalHeap="10000"
+            eternal="false"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="3600"
+            overflowToDisk="true">
+    </cache>
+
+    <cache
+            name="phoneOtpCache"
+            maxEntriesLocalHeap="10000"
+            eternal="false"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="3600"
+            overflowToDisk="true">
+    </cache>
+</ehcache>
