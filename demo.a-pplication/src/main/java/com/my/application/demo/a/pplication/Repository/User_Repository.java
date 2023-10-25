@@ -13,7 +13,9 @@ public interface User_Repository  extends JpaRepository<Users,Integer>
     Users findByPhone(String phone);
 
     Users findByEmail(String email);
-}
+    }
+
+
 
   //  User findById(Long id);
   //  User save(User user);

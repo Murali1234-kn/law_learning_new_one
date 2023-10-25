@@ -23,7 +23,8 @@ public class User_Controller {
             @RequestParam User_role role, @RequestBody Users user,
             @RequestParam String action) {
 
-        if ("sendotplogin".equalsIgnoreCase(action)) {
+        if ("sendotplogin".equalsIgnoreCase(action))
+        {
             if (email != null && phone != null && role != null) {
                 boolean userExists = user_Service.User_Exist(email, phone, role);
                 if (userExists) {
@@ -72,53 +73,63 @@ public class User_Controller {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
         }
     }
+
     @PostMapping("/forgetemail")
-        public ResponseEntity<LoginResponse> forgetEmail(@RequestParam String phone, @RequestParam String phoneotp,
-                @RequestParam String newEmail, @RequestParam String emailotp,
-                @RequestParam String action)
-    {
-            if ("sendphoneotp".equalsIgnoreCase(action))
-            {
-                return user_Service.sendPhoneOTP(phone, phoneotp);
-            }
-            else if ("verifyphoneotp".equalsIgnoreCase(action))
-            {
-                return user_Service.verifyPhoneOTP(phone, phoneotp);
-
-            }
-            else if ("sendnewemailotp".equalsIgnoreCase(action))
-            {
-                return user_Service.sendNewEmailOTP(newEmail, emailotp);
-
-            }
-            else if ("verifynewemailotp".equalsIgnoreCase(action))
-            {
-                return user_Service.verifyNewEmailOTP(newEmail, emailotp);
-
-            }
-            else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
-            }
-        }
-        @PostMapping("/forgetphone")
-        public ResponseEntity<LoginResponse> forgetPhone(@RequestParam String email, @RequestParam String emailotp,
-                @RequestParam String newPhone, @RequestParam String phoneotp,
-                @RequestParam String action)
-        {
-            if ("sendemailotp".equalsIgnoreCase(action)) {
-                return user_Service.sendEmailOTP(email, emailotp);
-            } else if ("verifyemailotp".equalsIgnoreCase(action)) {
-                return user_Service.verifyEmailOTP(email, emailotp);
-            } else if ("sendnewphoneotp".equalsIgnoreCase(action)) {
-                return user_Service.sendNewPhoneOTP(newPhone);
-            } else if ("verifynewphoneotp".equalsIgnoreCase(action)) {
-                return user_Service.verifyNewPhoneOTP(newPhone, phoneotp);
+        public ResponseEntity<LoginResponse> forgetEmail(
+                @RequestParam String phone,
+                @RequestParam String phoneotp, @RequestParam String action
+        ) {
+            if ("1".equalsIgnoreCase(action)) {
+                return user_Service.send_PhoneOTP(phone);
+            } else if ("2".equalsIgnoreCase(action)) {
+                return user_Service.verify_PhoneOTP(phone, phoneotp);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
             }
         }
+    @PostMapping("/updateemail")
+    public ResponseEntity<LoginResponse> updateEmail(
+            @RequestParam String email,
+            @RequestParam String emailotp,
+            @RequestParam String phone,
+            @RequestParam String action
+    ) {
+        if ("3".equalsIgnoreCase(action)) {
+            return user_Service.send_NewEmailOTP(email);
+        } else if ("4".equalsIgnoreCase(action))
+        {
+            return user_Service.verify_NewEmailOTP(phone,email, emailotp);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
+        }
     }
-
+        @PostMapping("/forgetphone")
+        public ResponseEntity<LoginResponse> forgetPhone(@RequestParam String email, @RequestParam String emailotp,
+                @RequestParam String phone, @RequestParam String phoneotp,
+                @RequestParam String action)
+        {
+            if ("sendemailotp".equalsIgnoreCase(action))
+            {
+                return user_Service.send_EmailOTP(email);
+            }
+            else if ("verifyemailotp".equalsIgnoreCase(action))
+            {
+                return user_Service.verify_EmailOTP(email, emailotp);
+            }
+            else if ("sendnewphoneotp".equalsIgnoreCase(action))
+            {
+                return user_Service.send_NewPhoneOTP(phone);
+            }
+            else if ("verifynewphoneotp".equalsIgnoreCase(action))
+            {
+                return user_Service.verify_NewPhoneOTP(email,phone,phoneotp);
+            }
+            else
+            {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
+            }
+        }
+    }
 
   /* @PostMapping("/login/sendotp")
     public ResponseEntity<LoginResponse> sendOtp_For_Login(@RequestParam String email, @RequestParam String phone,

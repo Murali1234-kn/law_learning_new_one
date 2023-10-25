@@ -56,31 +56,32 @@ public class PhoneOtpService {
     public void cachePhoneOtp(String phone, String phoneotp) {
         Cache cache = cacheManager.getCache("phoneOtpCache");
         Element element = new Element(phone, phoneotp);
-        System.out.println("cachephoneotp" + element);
+        System.out.println("cache  phoneotp" + element);
         element.setTimeToLive((int) TimeUnit.MINUTES.toSeconds(5000));
         cache.put(element);
     }
 
     public boolean validatePhoneOtp(String phone, String phoneotp) {
         String cachedValue = getCachedPhoneOtp(phone);
-        System.out.println("cahced value phone otp"+cachedValue);
-        System.out.println("phone otp"+phoneotp);
+        System.out.println("cached value phone otp" + cachedValue);
+        System.out.println("phone otp" + phoneotp);
         return cachedValue != null && cachedValue.equals(phoneotp);
     }
 
     public String getCachedPhoneOtp(String phone) {
         Cache cache = cacheManager.getCache("phoneOtpCache");
         Element cachedOtp = cache.get(phone);
-        System.out.println("cachedotp in phone"+cachedOtp);
-        if (cachedOtp != null)
-        {
+        System.out.println("cachedotp in phone" + cachedOtp);
+        if (cachedOtp != null) {
             return (String) cachedOtp.getObjectValue();
         }
         return null;
-    }  public boolean sendPhoneOtp(String phone, String phoneotp) {
+    }
+
+    public boolean sendPhoneOtp(String phone, String phoneotp) {
         try {
             String account_sid = "AC020d6ca5c5f77b47e921a402f1ecda2a";
-            String auth_token = "15e669def291491fe2b29effa4da2307";
+            String auth_token = "2b63a79e174e6290c335eba7c8f5f925";
             String trial_number = "+17319374329";
             String defaultCountryCode = "+91";
 
@@ -110,7 +111,6 @@ public class PhoneOtpService {
             return false;
         }
     }
-
 }
 
     //2factor

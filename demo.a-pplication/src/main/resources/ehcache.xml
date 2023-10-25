@@ -19,7 +19,6 @@
             timeToLiveSeconds="3600"
             overflowToDisk="true">
     </cache>
-
     <cache
             name="phoneOtpCache"
             maxEntriesLocalHeap="10000"

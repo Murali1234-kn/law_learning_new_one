@@ -60,11 +60,13 @@ public class Users {
         this.email = email;
     }
 
-    public String getPhone() {
+    public String getPhone()
+    {
         return phone;
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
 }

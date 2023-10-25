@@ -100,71 +100,8 @@ public class User_Service {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid OTPs. Login failed"));
         }
     }
-//forgetemail................>>>/;
-    public ResponseEntity<LoginResponse> sendPhoneOTP(String phone, String phoneotp)
-    {
-        Users user = user_repository.findByPhone(phone);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Phone number not found"));
-        }
-
-        String phoneOtp = phoneOtpService.generateOtp();
-        boolean phoneSent = phoneOtpService.sendPhoneOtp(phone, phoneotp);
-
-        if (!phoneSent) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Failed to send Phone OTP"));
-        }
-
-        // Cache the phone OTP for verification
-        phoneOtpService.cachePhoneOtp(phone, phoneotp);
-
-        return ResponseEntity.ok(new LoginResponse("Phone OTP sent to the phone number"));
-    }
-
-    public ResponseEntity<LoginResponse> verifyPhoneOTP(String phone, String phoneotp) {
-        boolean phoneOtpValid = phoneOtpService.validatePhoneOtp(phone, phoneotp);
-
-        if (!phoneOtpValid) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid Phone OTP"));
-        }
-
-        return ResponseEntity.ok(new LoginResponse("Phone OTP verified successfully"));
-    }
-
-    public ResponseEntity<LoginResponse> sendNewEmailOTP(String newEmail, String emailotp) {
-        String emailOtp = emailOtpService.generateOtp();
-        boolean emailSent = emailOtpService.sendEmail(newEmail, emailotp);
-
-        if (!emailSent) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Failed to send Email OTP"));
-        }
-        emailOtpService.cacheEmailOtp(newEmail, emailotp);
-
-        return ResponseEntity.ok(new LoginResponse("Email OTP sent to the new email address"));
-    }
-    public ResponseEntity<LoginResponse> verifyNewEmailOTP(String newEmail, String emailotp) {
-            boolean emailOtpValid = emailOtpService.validateEmailOtp(newEmail, emailotp);
-
-            if (!emailOtpValid)
-            {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid Email OTP"));
-            }
-            Users user = user_repository.findByEmail(newEmail); // Find the user by the new email
-            if (user != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(new LoginResponse("Email already exists"));
-            }
-
-            Users userByPhone = user_repository.findByPhone(user.getPhone());
-            if (userByPhone != null) {
-                userByPhone.setEmail(newEmail); // Update the email
-                user_repository.save(userByPhone); // Save the changes
-                return ResponseEntity.ok(new LoginResponse("Email OTP verified and email updated successfully"));
-            }
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Unable to update email"));
-        }
-        //       forgetphone .............>>//;
-        public ResponseEntity<LoginResponse> sendEmailOTP(String email, String emailOtp) {
+    //       forgetphone .............>>//;
+        public ResponseEntity<LoginResponse> send_EmailOTP(String email) {
             Users user = user_repository.findByEmail(email);
             if (user == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Email not found"));
@@ -179,10 +116,10 @@ public class User_Service {
 
             emailOtpService.cacheEmailOtp(email, emailOtpGenerated);
 
-            return ResponseEntity.ok(new LoginResponse("Email OTP sent to the email address"));
+            return ResponseEntity.ok(new LoginResponse("Email OTP sent success"));
         }
-        public ResponseEntity<LoginResponse> verifyEmailOTP(String email, String emailOtp) {
-            boolean emailOtpValid = emailOtpService.validateEmailOtp(email, emailOtp);
+        public ResponseEntity<LoginResponse> verify_EmailOTP(String email, String emailotp) {
+            boolean emailOtpValid = emailOtpService.validateEmailOtp(email, emailotp);
 
             if (!emailOtpValid)
             {
@@ -192,46 +129,110 @@ public class User_Service {
             return ResponseEntity.ok(new LoginResponse("Email OTP verified successfully"));
         }
 
-        public ResponseEntity<LoginResponse> sendNewPhoneOTP(String newPhone)
+        public ResponseEntity<LoginResponse> send_NewPhoneOTP(String phone)
         {
-            String phoneOtp = phoneOtpService.generateOtp();
-            boolean phoneSent = phoneOtpService.sendPhoneOtp(newPhone, phoneOtp);
+            String phoneotp = phoneOtpService.generateOtp();
+            boolean phoneSent = phoneOtpService.sendPhoneOtp(phone,phoneotp);
 
             if (!phoneSent)
             {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Failed to send Phone OTP"));
             }
-            // Cache the phone OTP for verification
-            phoneOtpService.cachePhoneOtp(newPhone, phoneOtp);
+            // Cache the phone otp for verification
+            phoneOtpService.cachePhoneOtp(phone,phoneotp);
+
             return ResponseEntity.ok(new LoginResponse("Phone OTP sent to the new phone number"));
         }
+    public ResponseEntity<LoginResponse> verify_NewPhoneOTP(String email, String phone,String phoneotp)
+    {
+        // Verify the new phone OTP
+        boolean newPhoneOtpValid = phoneOtpService.validatePhoneOtp(phone, phoneotp);
 
-        public ResponseEntity<LoginResponse> verifyNewPhoneOTP(String newPhone, String phoneOtp)
-        {
-            boolean phoneOtpValid = phoneOtpService.validatePhoneOtp(newPhone, phoneOtp);
-
-            if (!phoneOtpValid)
-            {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid Phone OTP"));
-            }
-
-            // Find the user by the new phone number
-            Users user = user_repository.findByPhone(newPhone);
-
-            if (user != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body(new LoginResponse("Phone number already exists"));
-            }
-
-            Users userByPhone = user_repository.findByPhone(user.getPhone());
-            if (userByPhone != null) {
-                userByPhone.setPhone(newPhone);
-                user_repository.save(userByPhone); // Save the changes
-                return ResponseEntity.ok(new LoginResponse("Phone OTP verified, and phone number updated successfully"));
-            }
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Unable to update phone number"));
+        if (!newPhoneOtpValid) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid New Phone OTP"));
         }
+        Users user = user_repository.findByEmail(email);
+
+        if (user != null) {
+            // Update the user's phone number
+            user.setPhone(phone);
+            user_repository.save(user);
+
+            return ResponseEntity.ok(new LoginResponse("New Phone OTP verified, and phone number updated successfully"));
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Unable to update phone number"));
     }
+    //forgetemail................>>>/;
+
+    public ResponseEntity<LoginResponse> send_PhoneOTP(String phone) {
+        Users user = user_repository.findByPhone(phone);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("phone number not found"));
+        }
+
+        String phoneotp_generated = phoneOtpService.generateOtp();
+        boolean emailSent = phoneOtpService.sendPhoneOtp(phone, phoneotp_generated);
+
+        if (!emailSent) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Failed to send phone OTP"));
+        }
+
+        phoneOtpService.cachePhoneOtp(phone,phoneotp_generated);
+
+        return ResponseEntity.ok(new LoginResponse("phone  OTP sent success"));
+    }
+    public ResponseEntity<LoginResponse> verify_PhoneOTP(String phone, String phoneotp)
+    {
+        boolean phoneotp_Valid = phoneOtpService.validatePhoneOtp(phone, phoneotp);
+
+        if (!phoneotp_Valid)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid phone OTP"));
+        }
+
+        return ResponseEntity.ok(new LoginResponse("phone OTP verified successfully"));
+    }
+    public ResponseEntity<LoginResponse> send_NewEmailOTP(String email)
+    {
+        String emailotp = emailOtpService.generateOtp();
+        boolean emailsent = emailOtpService.sendEmail(email,emailotp);
+
+        if (!emailsent)
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Failed to send email OTP"));
+        }
+        // Cache the phone otp for verification
+        emailOtpService.cacheEmailOtp(email,emailotp);
+
+        return ResponseEntity.ok(new LoginResponse("Email otp sent to the new Email"));
+    }
+    public ResponseEntity<LoginResponse> verify_NewEmailOTP(String phone,String email, String emailotp) {
+        // Verify the new email OTP
+        boolean newEmailOtpValid = emailOtpService.validateEmailOtp(email, emailotp);
+
+        if (!newEmailOtpValid) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid New Email OTP"));
+        }
+        System.out.println("phone---->"+phone);
+        Users user = user_repository.findByPhone(phone);
+        System.out.println("user    >>>>>>>>>>>"+user);
+
+        if (user != null)
+        {
+            // Update the user's email
+            user.setEmail(email);
+            user_repository.save(user);
+
+            return ResponseEntity.ok(new LoginResponse("New Email OTP verified, and email updated successfully"));
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Unable to update email"));
+    }
+
+}
+
+
 
 
 
