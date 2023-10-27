@@ -219,7 +219,7 @@ public class PhoneOtpService {
         return UUID.randomUUID().toString();
     }*/
 //mesg91
-  /*  public String generateAndSendPhoneOtp(String phone) {
+   /* public String sendPhoneOtp(String phone) {
         try {
             String widgetId = "336a6c6c7665373632363430";
             String authToken = "407796AY9IOizlii65279882P1";
@@ -260,8 +260,9 @@ public class PhoneOtpService {
             e.printStackTrace();
             return "Error generating or sending OTP";
         }
-    }*/
-
+    }
+}
+*/
 //vonage
    /* public String generateAndSendPhoneOtp(String phone) {
         try {

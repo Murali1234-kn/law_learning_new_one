@@ -223,6 +223,7 @@ public class User_Service {
             if (newEmailOtpValid)
             {
                 Users user = user_repository.findByPhone(phone);
+
                 if (user != null) {
                     user.setEmail(email);
                     user_repository.save(user);
