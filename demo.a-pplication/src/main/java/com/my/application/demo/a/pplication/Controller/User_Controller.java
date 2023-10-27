@@ -2,6 +2,7 @@ package com.my.application.demo.a.pplication.Controller;
 
 import com.my.application.demo.a.pplication.Model.User_role;
 import com.my.application.demo.a.pplication.Model.Users;
+import com.my.application.demo.a.pplication.Otp_handling_and_cachemanagement.VerficationToken_Service;
 import com.my.application.demo.a.pplication.Repository.User_Repository;
 import com.my.application.demo.a.pplication.Service.LoginResponse;
 import com.my.application.demo.a.pplication.Service.User_Service;
@@ -11,24 +12,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/signup&login/")
+@RequestMapping("/api/signuplogin")
 public class User_Controller
 {
     @Autowired
     public User_Service user_Service;
     @Autowired
     public User_Repository user_repository;
+    @Autowired
+    public VerficationToken_Service verficationToken_service;
 
-    @PostMapping("/users")
-    public ResponseEntity<LoginResponse> sendOtp_VerifyOtp(
+    @PostMapping("/sendotp")
+    public ResponseEntity<LoginResponse> sendOtp(
             @RequestParam String email, @RequestParam String phone,
             @RequestParam User_role role, @RequestBody Users user,
-            @RequestParam String emailotp, @RequestParam String phoneotp,
-            @RequestParam String action) {
+            @RequestParam String action)
+    {
 
         if ("sendotplogin".equalsIgnoreCase(action))
         {
-            if (email != null && phone != null && role != null) {
+            if (email != null && phone != null && role != null)
+            {
                 boolean userExists = user_Service.User_Exist(email, phone, role);
                 if (userExists) {
                     return user_Service.sendOtp(user);
@@ -40,14 +44,28 @@ public class User_Controller
             if (email != null && phone != null && role != null) {
                 boolean userExists = user_Service.User_Exist(email, phone, role);
 
-                if (userExists) {
+                if (userExists)
+                {
                     return ResponseEntity.status(HttpStatus.CONFLICT).body(new LoginResponse("User already exists for sign-up"));
                 } else {
                     Users newUser = new Users(email, phone, role);
                     return user_Service.sendOtp(newUser);
                 }
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Missing required parameters"));
             }
-        } else if ("verifylogin".equalsIgnoreCase(action)) {
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Internal server error"));
+    }
+
+    @PostMapping("/verifyotp")
+    public ResponseEntity<LoginResponse> verifyOtp(@RequestBody Users user, @RequestParam String emailotp,
+            @RequestParam String phoneotp,
+            @RequestParam String action)
+    {
+        if ("verifylogin".equalsIgnoreCase(action)) {
             if (user != null) {
                 return user_Service.verify_And_Login(user, emailotp, phoneotp);
             } else {
@@ -62,96 +80,62 @@ public class User_Controller
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new LoginResponse("Internal server error"));
     }
-}
-
-  /*  @PostMapping("/login/sendotp")
-    public ResponseEntity<LoginResponse> sendOtp_For_Login(@RequestParam String email, @RequestParam String phone,
-                                                           @RequestParam User_role role) {
-        boolean valid = user_Service.User_Valid(email,phone,role);
-        System.out.println("userExits :"+valid);
-
-        if (valid)
-        {
-            Users user = new Users(email, phone, role);
-            return user_Service.sendOtp(user);
+    @PostMapping("/forgetemail")
+    public ResponseEntity<?> forgetEmail(
+                @RequestParam String phone,
+                @RequestParam String phoneotp,
+                @RequestParam String action
+        ) {
+            if ("1".equalsIgnoreCase(action)) {
+                return user_Service.send_PhoneOTP(phone);
+            } else if ("2".equalsIgnoreCase(action)) {
+                return user_Service.verify_PhoneOTP(phone, phoneotp);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
+            }
         }
-        else
+        @PostMapping("/updateemail")
+        public ResponseEntity<LoginResponse> updateEmail(
+                @RequestParam String email,
+                @RequestParam String emailotp,
+                @RequestParam String action,
+                @RequestParam String token
+        ) {
+            if ("3".equalsIgnoreCase(action)) {
+                return user_Service.send_NewEmailOTP(email);
+            } else if ("4".equalsIgnoreCase(action))
+            {
+                return user_Service.verify_NewEmailOTP(token,email,emailotp);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
+            }
+        }
+    ////////////////////////////////////////////////////////////////////////////////;
+        @PostMapping("/forgetphone")
+        public ResponseEntity<LoginResponse> forgetPhone(@RequestParam String email, @RequestParam String emailotp,
+                @RequestParam String phone, @RequestParam String phoneotp,
+                @RequestParam String action)
         {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid user"));
+            if ("sendemailotp".equalsIgnoreCase(action))
+            {
+                return user_Service.send_EmailOTP(email);
+            }
+            else if ("verifyemailotp".equalsIgnoreCase(action))
+            {
+                return user_Service.verify_EmailOTP(email, emailotp);
+            }
+            else if ("sendnewphoneotp".equalsIgnoreCase(action))
+            {
+                return user_Service.send_NewPhoneOTP(phone);
+            }
+            else if ("verifynewphoneotp".equalsIgnoreCase(action))
+            {
+                return user_Service.verify_NewPhoneOTP(email,phone,phoneotp);
+            }
+            else
+            {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
+            }
         }
     }
-    @PostMapping("/login/verifyotp")
-    public ResponseEntity<LoginResponse> verifyOtp_For_Login(@RequestBody Users user, @RequestParam String emailotp,
-                                                             @RequestParam String phoneotp)
-    {
-        return user_Service.verify_And_Login(user,emailotp, phoneotp);
-    }
-    @PostMapping("/signup/sendotp")
-public ResponseEntity<LoginResponse> sendOtp_For_SignUp(@RequestParam String email,@RequestParam String phone, @RequestParam User_role role) {
-    boolean userExists = user_Service.User_Exist(email,phone,role);
-        System.out.println("userExits  : "+userExists);
-    if (userExists)
-    {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new LoginResponse("User already exists"));
-    }
-    else
-    {
-        Users user = new Users(email, phone, role);
-        return user_Service.sendOtp(user);
-    }
-}
-
-    @PostMapping("/signup/verifyotp")
-    public ResponseEntity<LoginResponse> verifyOtp_For_SignUp(@RequestParam String emailotp, @RequestParam String phoneotp,@RequestBody Users users) {
-
-        Users exist = user_repository.findByEmailAndPhoneAndRole(users.getEmail(), users.getPhone(),users.getRole());
-        System.out.println("users exit: "+exist);
-
-        if (exist == null)
-        {
-
-            return user_Service.verify_And_SignUp(users,emailotp,phoneotp);
-        }
-        else
-        {
-            System.out.println("already exits users");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new LoginResponse("User with the same email, phone,and role already exists"));
-        }
-    }*/
-
-    /*@PostMapping("/users")
-      public ResponseEntity<LoginResponse> sendOtp_VerifyOtp(@RequestParam String email, @RequestParam String phone,
-                                                             @RequestParam User_role role, @RequestBody Users user, @RequestParam  String emailotp,
-                                                             @RequestParam String phoneotp, @RequestParam String action)
-      {
-          if (action.equals("sendotp"))
-           {
-              boolean user_Exists = user_Service.User_Exist(email,phone,role);
-
-              if (user_Exists)
-              {
-                  return ResponseEntity.status(HttpStatus.CONFLICT).body(new LoginResponse("User already exists"));
-              }
-              else
-              {
-                  Users users = new Users(email, phone, role);
-                  return user_Service.sendOtp(users);
-              }
-          }
-         else if (action.equals("verifyotp"))
-         {
-              if (user != null)
-              {
-                  return user_Service.verify_And_Login(user,emailotp,phoneotp);
-              }
-              else
-              {
-                  return user_Service.verify_And_SignUp(new Users(email, phone, role), emailotp, phoneotp);
-              }
-          }
-           else {
-              return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
-          }
-      }*/

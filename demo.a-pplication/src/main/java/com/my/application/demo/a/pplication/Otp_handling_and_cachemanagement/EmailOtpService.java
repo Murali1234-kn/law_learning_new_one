@@ -73,7 +73,7 @@ public class EmailOtpService
         System.out.println("Entered email: " + email);
         System.out.println("Entered email OTP: " + emailotp);
         System.out.println("Cached email OTP: " + cachedValue);
-       System.out.println("cahced value email otp"+cachedValue);
+       System.out.println("cahced value email otp:--->"+cachedValue);
 
         if (cachedValue != null && cachedValue.equals(emailotp)) {
             System.out.println("Email OTP validation succeeded.");

@@ -56,28 +56,59 @@ public class PhoneOtpService {
     public void cachePhoneOtp(String phone, String phoneotp) {
         Cache cache = cacheManager.getCache("phoneOtpCache");
         Element element = new Element(phone, phoneotp);
-        System.out.println("cachephoneotp" + element);
+        System.out.println("cache  phoneotp" + element);
         element.setTimeToLive((int) TimeUnit.MINUTES.toSeconds(5000));
         cache.put(element);
     }
-
     public boolean validatePhoneOtp(String phone, String phoneotp) {
         String cachedValue = getCachedPhoneOtp(phone);
-        System.out.println("cahced value phone otp"+cachedValue);
-        System.out.println("phone otp"+phoneotp);
+        System.out.println("cached value phone otp" + cachedValue);
+        System.out.println("phone otp" + phoneotp);
         return cachedValue != null && cachedValue.equals(phoneotp);
     }
-
-    private String getCachedPhoneOtp(String phone) {
+    public String getCachedPhoneOtp(String phone) {
         Cache cache = cacheManager.getCache("phoneOtpCache");
         Element cachedOtp = cache.get(phone);
-        System.out.println("cachedotp in phone"+cachedOtp);
-        if (cachedOtp != null)
-        {
+        System.out.println("cachedotp in phone" + cachedOtp);
+        if (cachedOtp != null) {
             return (String) cachedOtp.getObjectValue();
         }
         return null;
     }
+    public boolean sendPhoneOtp(String phone, String phoneotp) {
+        try {
+            String account_sid = "AC020d6ca5c5f77b47e921a402f1ecda2a";
+            String auth_token = "888b58269c06179fd8cc7cf85ccb67db";
+            String trial_number = "+17319374329";
+            String defaultCountryCode = "+91";
+
+            Twilio.init(account_sid, auth_token);
+            String otp = phoneotp;
+
+            String messageBody = "Your OTP code is: " + otp;
+            System.out.println("phone otp is " + otp);
+
+            Message message = Message.creator(
+                    new PhoneNumber(defaultCountryCode + phone),
+                    new PhoneNumber(trial_number),
+                    messageBody
+            ).create();
+
+            if (message.getSid() != null) {
+                // Cache the OTP you generated for the phone
+                cachePhoneOtp(phone, otp);
+                System.out.println("otp successful: " + message.getSid());
+                return true;
+            } else {
+                System.out.println("failed to send OTP");
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
 
     //2factor
 /*  public String generateAndSendPhoneOtp(String phone) {
@@ -150,41 +181,6 @@ public class PhoneOtpService {
     }*/
 //twilio
 
-    public boolean sendPhoneOtp(String phone, String phoneotp) {
-        try {
-            String account_sid = "AC020d6ca5c5f77b47e921a402f1ecda2a";
-            String auth_token = "7c96075c0b3f11c0f5323c7361fb1d6c";
-            String trial_number = "+17319374329";
-            String defaultCountryCode = "+91";
-
-            Twilio.init(account_sid, auth_token);
-            String otp = phoneotp;
-
-            String messageBody = "Your OTP code is: " + otp;
-            System.out.println("phone otp is " + otp);
-
-            Message message = Message.creator(
-                    new PhoneNumber(defaultCountryCode + phone),
-                    new PhoneNumber(trial_number),
-                    messageBody
-            ).create();
-
-            if (message.getSid() != null) {
-                // Cache the OTP you generated for the phone
-                cachePhoneOtp(phone, otp);
-                System.out.println("otp successful: " + message.getSid());
-                return true;
-            } else {
-                System.out.println("failed to send OTP");
-                return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-}
 
 //nexmo or vonage
   /* public String generateAndSendPhoneOtp(String phone) {
