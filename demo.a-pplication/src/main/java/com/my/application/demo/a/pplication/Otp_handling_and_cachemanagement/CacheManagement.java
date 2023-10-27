@@ -27,6 +27,7 @@ public class CacheManagement implements WebMvcConfigurer {
 
         return murali;
     }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")

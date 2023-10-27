@@ -60,14 +60,12 @@ public class PhoneOtpService {
         element.setTimeToLive((int) TimeUnit.MINUTES.toSeconds(5000));
         cache.put(element);
     }
-
     public boolean validatePhoneOtp(String phone, String phoneotp) {
         String cachedValue = getCachedPhoneOtp(phone);
         System.out.println("cached value phone otp" + cachedValue);
         System.out.println("phone otp" + phoneotp);
         return cachedValue != null && cachedValue.equals(phoneotp);
     }
-
     public String getCachedPhoneOtp(String phone) {
         Cache cache = cacheManager.getCache("phoneOtpCache");
         Element cachedOtp = cache.get(phone);
@@ -77,11 +75,10 @@ public class PhoneOtpService {
         }
         return null;
     }
-
     public boolean sendPhoneOtp(String phone, String phoneotp) {
         try {
             String account_sid = "AC020d6ca5c5f77b47e921a402f1ecda2a";
-            String auth_token = "2b63a79e174e6290c335eba7c8f5f925";
+            String auth_token = "610b40e3369b6fa1d174732f5f49ffd9";
             String trial_number = "+17319374329";
             String defaultCountryCode = "+91";
 

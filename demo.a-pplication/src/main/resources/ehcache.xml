@@ -10,7 +10,14 @@
             timeToLiveSeconds="3600"
             overflowToDisk="true">
     </defaultCache>
-
+    <cache
+            name="verificationTokenCache"
+            maxEntriesLocalHeap="10000"
+            eternal="false"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="3600"
+            overflowToDisk="true">
+    </cache>
     <cache
             name="emailOtpCache"
             maxEntriesLocalHeap="10000"
