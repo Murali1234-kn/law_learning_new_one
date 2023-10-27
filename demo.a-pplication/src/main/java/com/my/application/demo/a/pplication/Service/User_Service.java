@@ -241,7 +241,6 @@ public class User_Service {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse("Invalid verification"));
         }
     }
-
 }
 
 
