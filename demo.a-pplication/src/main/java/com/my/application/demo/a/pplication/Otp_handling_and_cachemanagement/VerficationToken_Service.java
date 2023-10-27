@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
     @Service
-    public class VerficationToken_Service {
+    public class VerficationToken_Service
+    {
         @Autowired
         private CacheManager cacheManager;
 
@@ -16,36 +17,32 @@ import org.springframework.stereotype.Service;
         public void storeVerificationToken(String token, String phone)
         {
             Cache cache = cacheManager.getCache(Cache_Name);
-            if (cache != null) {
-                cache.put(new net.sf.ehcache.Element(token, phone));
+            System.out.println("cache store verifcation------>"+cache);
+            if (cache != null)
+            {
+                cache.put(new Element(token, phone));
             }
         }
 
         public String getPhoneForVerificationToken(String token)
         {
             Cache cache = cacheManager.getCache(Cache_Name);
-            if (cache != null) {
+            System.out.println("cachhe in get phone"+cache);
+            if (cache != null)
+            {
                 Element element = cache.get(token);
+                System.out.println("element----->"+element);
                 if (element != null) {
                     return (String) element.getObjectValue();
                 }
             }
             return null;
         }
-    }
+    public void removeVerificationToken(String token) {
+            Cache cache = cacheManager.getCache(Cache_Name);
+            if (cache != null) {
+                cache.remove(token);
 
-    /*    public void removeVerificationToken(String verificationToken) {
-            Cache verificationTokenCache = cacheManager.getCache(VERIFICATION_TOKEN_CACHE_NAME);
-            if (verificationTokenCache != null) {
-                verificationTokenCache.remove(verificationToken);
             }
         }
-
-        public boolean validateVerificationToken(String verificationToken) {
-            Cache verificationTokenCache = cacheManager.getCache(VERIFICATION_TOKEN_CACHE_NAME);
-            if (verificationTokenCache != null) {
-                return verificationTokenCache.isKeyInCache(verificationToken);
-            }
-            return false;
-        }
-   }*/
+   }

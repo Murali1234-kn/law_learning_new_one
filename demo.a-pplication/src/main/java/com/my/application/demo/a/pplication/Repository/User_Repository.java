@@ -14,15 +14,3 @@ public interface User_Repository  extends JpaRepository<Users,Integer>
 
     Users findByEmail(String email);
     }
-
-
-
-  //  User findById(Long id);
-  //  User save(User user);
-   // void delete(User user);
-
-  //  findAll(),
-    //    findById() ,
-      //  save(),
-        //delete(),
-        //findByEmailAndPhone()

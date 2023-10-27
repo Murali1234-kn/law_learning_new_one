@@ -21,13 +21,12 @@ public class CacheManagement implements WebMvcConfigurer {
 
     @Bean
     public EhCacheManagerFactoryBean ehCacheCacheManager() {
-        EhCacheManagerFactoryBean murali = new EhCacheManagerFactoryBean();
-        murali.setConfigLocation(new ClassPathResource("ehcache.xml"));
-        murali.setShared(true);
+        EhCacheManagerFactoryBean ehcache = new EhCacheManagerFactoryBean();
+        ehcache.setConfigLocation(new ClassPathResource("ehcache.xml"));
+        ehcache.setShared(true);
 
-        return murali;
+        return ehcache;
     }
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")

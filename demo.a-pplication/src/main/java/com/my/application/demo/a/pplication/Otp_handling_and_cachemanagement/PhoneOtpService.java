@@ -78,7 +78,7 @@ public class PhoneOtpService {
     public boolean sendPhoneOtp(String phone, String phoneotp) {
         try {
             String account_sid = "AC020d6ca5c5f77b47e921a402f1ecda2a";
-            String auth_token = "610b40e3369b6fa1d174732f5f49ffd9";
+            String auth_token = "888b58269c06179fd8cc7cf85ccb67db";
             String trial_number = "+17319374329";
             String defaultCountryCode = "+91";
 

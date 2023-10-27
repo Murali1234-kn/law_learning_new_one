@@ -2,6 +2,7 @@ package com.my.application.demo.a.pplication.Controller;
 
 import com.my.application.demo.a.pplication.Model.User_role;
 import com.my.application.demo.a.pplication.Model.Users;
+import com.my.application.demo.a.pplication.Otp_handling_and_cachemanagement.VerficationToken_Service;
 import com.my.application.demo.a.pplication.Repository.User_Repository;
 import com.my.application.demo.a.pplication.Service.LoginResponse;
 import com.my.application.demo.a.pplication.Service.User_Service;
@@ -12,11 +13,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/signuplogin")
-public class User_Controller {
+public class User_Controller
+{
     @Autowired
     public User_Service user_Service;
     @Autowired
     public User_Repository user_repository;
+    @Autowired
+    public VerficationToken_Service verficationToken_service;
 
     @PostMapping("/sendotp")
     public ResponseEntity<LoginResponse> sendOtp(
@@ -27,7 +31,8 @@ public class User_Controller {
 
         if ("sendotplogin".equalsIgnoreCase(action))
         {
-            if (email != null && phone != null && role != null) {
+            if (email != null && phone != null && role != null)
+            {
                 boolean userExists = user_Service.User_Exist(email, phone, role);
                 if (userExists) {
                     return user_Service.sendOtp(user);
@@ -99,52 +104,13 @@ public class User_Controller {
         ) {
             if ("3".equalsIgnoreCase(action)) {
                 return user_Service.send_NewEmailOTP(email);
-            } else if ("4".equalsIgnoreCase(action)) {
+            } else if ("4".equalsIgnoreCase(action))
+            {
                 return user_Service.verify_NewEmailOTP(token,email,emailotp);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
             }
         }
-    /* @PostMapping("/forgetemail")
-        public ResponseEntity<LoginResponse> forgetEmail(
-                @RequestParam String phone,
-                @RequestParam String phoneotp,
-                @RequestParam String action)
-    {
-            if ("1".equalsIgnoreCase(action))
-            {
-                return user_Service.send_PhoneOTP(phone);
-            }
-            else if ("2".equalsIgnoreCase(action))
-            {
-                String verificationToken = generateUniqueToken();
-                return user_Service.verify_PhoneOTP(phone, verificationToken, phoneotp);
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
-            }
-        }
-    private String generateUniqueToken() {
-        return UUID.randomUUID().toString();
-    }
-        @PostMapping("/updateemail")
-        public ResponseEntity<LoginResponse> updateEmail(
-                @RequestParam String email,
-                @RequestParam String emailotp,
-                @RequestParam String verificationToken,
-                @RequestParam String action) {
-            if ("3".equalsIgnoreCase(action))
-            {
-                return user_Service.send_NewEmailOTP(email);
-            }
-            else if ("4".equalsIgnoreCase(action))
-            {
-                return user_Service.verify_NewEmailOTP(verificationToken, email, emailotp);
-            }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LoginResponse("Invalid action"));
-            }
-        }*/
     ////////////////////////////////////////////////////////////////////////////////;
         @PostMapping("/forgetphone")
         public ResponseEntity<LoginResponse> forgetPhone(@RequestParam String email, @RequestParam String emailotp,
