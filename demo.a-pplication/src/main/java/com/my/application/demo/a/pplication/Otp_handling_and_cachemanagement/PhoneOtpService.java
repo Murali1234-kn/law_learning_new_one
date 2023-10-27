@@ -16,37 +16,6 @@ public class PhoneOtpService {
     @Autowired
     public CacheManager cacheManager;
 
-    /*public boolean sendPhoneOtp(String phone, String phoneotp) {
-        try {
-            String apiKey = "5b61ddb3";
-            String apiSecret = "6Kn8yighuDf6Fbbt";
-            String vonagePhoneNumber = "+916300131956"; // virtual number registered with Vonage
-            VonageClient client = VonageClient.builder()
-                    .apiKey(apiKey)
-                    .apiSecret(apiSecret)
-                    .build();
-            String messageBody = "Your OTP code is: " + phoneotp;
-
-            String fullPhoneNumber = "+91" + phone;
-
-            TextMessage message = new TextMessage(vonagePhoneNumber, fullPhoneNumber, messageBody);
-            SmsSubmissionResponse response = client.getSmsClient().submitMessage(message);
-
-            if (response.getMessages().get(0).getErrorText() == null)
-            {
-                cachePhoneOtp(fullPhoneNumber, phoneotp);
-                System.out.println("Phoneotp: " + phoneotp);
-                return true; // Return true when OTP is sent successfully
-            } else {
-                System.out.println("Failed to send OTP: " + response.getMessages().get(0).getErrorText());
-                return false; // Return false when OTP sending fails
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false; // Return false in case of exceptions
-        }
-    }*/
-
     public String generateOtp() {
         Random random = new Random();
         int otp = 100000 + random.nextInt(900000);
@@ -181,7 +150,6 @@ public class PhoneOtpService {
     }*/
 //twilio
 
-
 //nexmo or vonage
   /* public String generateAndSendPhoneOtp(String phone) {
        try {
@@ -302,4 +270,34 @@ public class PhoneOtpService {
     private String generateUniqueMessageID() {
         return UUID.randomUUID().toString();
     }*/
+//vonage
+ /*public boolean sendPhoneOtp(String phone, String phoneotp) {
+        try {
+            String apiKey = "5b61ddb3";
+            String apiSecret = "6Kn8yighuDf6Fbbt";
+            String vonagePhoneNumber = "+916300131956"; // virtual number registered with Vonage
+            VonageClient client = VonageClient.builder()
+                    .apiKey(apiKey)
+                    .apiSecret(apiSecret)
+                    .build();
+            String messageBody = "Your OTP code is: " + phoneotp;
 
+            String fullPhoneNumber = "+91" + phone;
+
+            TextMessage message = new TextMessage(vonagePhoneNumber, fullPhoneNumber, messageBody);
+            SmsSubmissionResponse response = client.getSmsClient().submitMessage(message);
+
+            if (response.getMessages().get(0).getErrorText() == null)
+            {
+                cachePhoneOtp(fullPhoneNumber, phoneotp);
+                System.out.println("Phoneotp: " + phoneotp);
+                return true; // Return true when OTP is sent successfully
+            } else {
+                System.out.println("Failed to send OTP: " + response.getMessages().get(0).getErrorText());
+                return false; // Return false when OTP sending fails
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // Return false in case of exceptions
+        }
+    }*/
